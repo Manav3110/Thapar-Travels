@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../styles/home.css">
+    <script src="../lib/jquery-1.8.2.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.10.4/gsap.min.js" integrity="sha512-VEBjfxWUOyzl0bAwh4gdLEaQyDYPvLrZql3pw1ifgb6fhEvZl9iDDehwHZ+dsMzA0Jfww8Xt7COSZuJ/slxc4Q==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <link rel="stylesheet" href="../styles/result.css">
+    <link rel="stylesheet" href="../styles/home.css">
+    
+    <title>Document</title>
+
+    <script>
+        
+        $(document).ready(()=>{
+            if(localStorage.getItem("email").length==0)
+            {
+                $(location).prop("href","http://localhost:5000/");
+            }
+
+            const useremail=localStorage.getItem("email");
+            var sFlag=0
+            var url="/get-user-trips?thisEmail="+useremail;
+            const container = document.getElementById('products-cards-container');
+            var objects;
+            $.get(url, (jsonAr) => {
+                if (jsonAr.length == 0) {
+                    container.innerHTML = "<h1 style=\"margin-top:2em;color:\"white\";>No trips found</h1>";
+                } 
+                else {
+                    console.log(jsonAr)                
+                    container.innerHTML = returnCards(jsonAr);
+                }
+            });
+    
+            function returnCards(objects) {
+                return "<div class=\"products-cards\">" + objects.map(objects => `
+                        <div class="card" style="padding:0;">
+                            <img src="../uploads/${objects.ppic}" class="cardImage" alt="...">
+                            <div class="card-body">
+                                <h3 class="card-title" style="color: #2191D0;font-weight: bold;">${objects.location}</h3>
+                                <p class="card-text"><span class="cardInfo"><b>TripID    : </b></span>${objects.tripid}</p>
+                                <p class="card-text"><span class="cardInfo"><b>Email     : </b></span>${objects.email}</p>
+                                <p class="card-text"><span class="cardInfo"><b>Budget    : </b></span>₹${objects.budget}</p>
+                                <p class="card-text"><span class="cardInfo"><b>Days   : </b></span>${objects.days}</p>
+                                <p class="card-text"><span class="cardInfo"><b>Distance  : </b></span>${objects.distance}</p>
+                                <p class="card-text"><span class="cardInfo"><b>Contact   : </b></span>${objects.contact}</p>
+                            </div>
+                        </div>`).join('') + "</div>";
+            }
+
+            $("#logoutbtn").click(()=>{
+                localStorage.setItem("email","");
+                $(location).prop("href","http://localhost:5000/");
+            })
+
+            $("#sub-btn").click(()=>{
+                localStorage.setItem("budget","");
+                localStorage.setItem("location","");
+                var value=$("#res").val();
+                var radio=document.querySelector('input[name="sel_btn"]:checked').value;
+
+                if(radio=="budget")
+                {
+                    var url="/show-user-trip-budget?thisBudget="+value+"&thisEmail="+useremail;
+                    $.get(url,(jsonAr)=>{
+                        if(jsonAr.length==0)container.innerHTML="<h1 style=\"margin-top:2em;\">No trip found</h1>";
+
+                        else{
+                            console.log(jsonAr);
+                            container.innerHTML=returnCards(jsonAr);
+                        }
+                    })
+                }
+                else if(radio=="loc")
+                {
+                    var url="/show-user-trip-loc?thisLoc="+value+"&thisEmail="+useremail;
+                    $.get(url,(jsonAr)=>{
+                        if(jsonAr.length==0)container.innerHTML="<h1 style=\"margin-top:2em;\">No trip found</h1>";
+
+                        else{
+                            console.log(jsonAr);
+                            container.innerHTML=returnCards(jsonAr);
+                        }
+                    })
+                }
+
+                else{
+                    var url="/show-user-trip-id?thisId="+value+"&thisEmail="+useremail;
+                    $.get(url,(jsonAr)=>{
+                        if(jsonAr.length==0)container.innerHTML="<h1 style=\"margin-top:2em;\">No Trip found</h1>";
+
+                        else{
+                            console.log(jsonAr);
+                            container.innerHTML=returnCards(jsonAr);
+                        }
+                    })
+                }
+            })
+            $("#delbtn").click(()=>{
+                localStorage.setItem("budget","");
+                localStorage.setItem("location","");
+                var value=$("#res").val();
+                var radio=document.querySelector('input[name="sel_btn"]:checked').value;
+                if(radio=="budget")
+                {
+                    var url="/del-user-trip-budget?thisBudget="+value+"&thisEmail="+useremail;
+                    $.get(url,(jsonAr)=>{
+                        if(jsonAr.length==0)container.innerHTML="<h1 style=\"margin-top:2em;\">No Trip found</h1>";
+
+                        else{
+                            console.log(jsonAr);
+                            container.innerHTML=returnCards(jsonAr);
+                        }
+                    })
+                }
+                else if(radio=="loc")
+                {
+                    var url="/del-user-trip-loc?thisLoc="+value+"&thisEmail="+useremail;
+                    $.get(url,(jsonAr)=>{
+                        if(jsonAr.length==0)container.innerHTML="<h1 style=\"margin-top:2em;\">No Trip found</h1>";
+
+                        else{
+                            console.log(jsonAr);
+                            container.innerHTML=returnCards(jsonAr);
+                        }
+                    })
+                }
+
+                else{
+                    var url="/del-user-trip-id?thisId="+value+"&thisEmail="+useremail;
+                    $.get(url,(jsonAr)=>{
+                        if(jsonAr.length==0)container.innerHTML="<h1 style=\"margin-top:2em;\">No trip found</h1>";
+
+                        else{
+                            console.log(jsonAr);
+                            container.innerHTML=returnCards(jsonAr);
+                        }
+                    })
+                }
+            });
+        })
+    </script>
+</head>
+<body style="background-color:#18191A">
+    <div class="main">
+        <div class="nav-cont">
+            <div class="navbar">
+                <div class="logo">
+                    <h2><a href="/" style="text-decoration: none;color: #B0B3B8;">ThaparTravels</a></h2>
+                </div>
+                <nav>
+                    <ul>
+                        <li><a href="/">Home</a></li>
+                        <li><a id="logoutbtn" class="login-btn" style="cursor: pointer;">logout</a></li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+
+        <div class="search-cont" style="margin-top:0">
+            <div class="s-cont">
+                
+                <div class="radio-btn">
+                    <input type="radio" id="budget-btn" name="sel_btn" value="budget">
+                    <label for="budget">Budget</label><br>
+
+                    <input type="radio" id="loc-btn" name="sel_btn" value="loc">
+                    <label for="loc">Location</label>
+                    <input type="radio" id="id-btn" name="sel_btn" value="id">
+                    <label for="id">Trip id</label>
+                </div>
+                <div class="search">
+                        <input id="res" class="s-bar" type="text" placeholder="Enter budget or location" style="padding:0 .5em;">
+                        <input id="sub-btn" class="sub-btn" type="submit" value="Search" formaction="/deleteTrip">
+                        <input id="delbtn" style="background-color:#B0B3B8;" class="sub-btn" type="submit" value="Delete" formaction="/deleteTrip">
+                </div>
+            </div>
+        </div>
+        
+        <div id="products-cards-container" style="color:#B0B3B8;">
+
+        </div>
+    </div>
+</div>
+</body>
+</html>

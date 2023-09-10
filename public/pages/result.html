@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../styles/home.css">
+    <script src="../lib/jquery-1.8.2.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.10.4/gsap.min.js" integrity="sha512-VEBjfxWUOyzl0bAwh4gdLEaQyDYPvLrZql3pw1ifgb6fhEvZl9iDDehwHZ+dsMzA0Jfww8Xt7COSZuJ/slxc4Q==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <link rel="stylesheet" href="../styles/result.css">
+    <link rel="stylesheet" href="../styles/home.css">
+    
+    <title>Document</title>
+    <script>
+        
+        $(document).ready(()=>{
+            
+            var search;
+            var sFlag=0
+            var url
+            const container = document.getElementById('products-cards-container');
+            var objects;
+            if(localStorage.getItem("budget")!="")
+            {
+                search=localStorage.getItem("budget");
+                sFlag=1;
+                url="/show-trip-budget?thisBudget="+search;
+            }
+            else if(localStorage.getItem("location")!="")
+            {
+                search=localStorage.getItem("location");
+                sFlag=3;
+                url="/show-trip-loc?thisLoc="+search;
+            }
+
+            $("#res").val(search);
+            if($("#res").val().length==0)
+            {
+                url="/show-all-trips";
+            }
+
+            $.get(url, (jsonAr) => {
+                if (jsonAr.length == 0) {
+                    alert("invalid");
+                } 
+                else {
+                    console.log(jsonAr)                
+                    container.innerHTML = returnCards(jsonAr);
+                }
+            });
+            
+            console.log(objects);
+
+            function returnCards(objects) {
+                return "<div class=\"products-cards\">" + objects.map(objects => `
+                        <div class="card">
+                            <img src="../uploads/${objects.ppic}" class="cardImage" alt="...">
+                            <div class="card-body">
+                                <h3 class="card-title" style="color: #2191D0;font-weight: bold;">${objects.location}</h3>
+                                <p class="card-text"><span class="cardInfo"><b>Email     : </b></span>${objects.email}</p>
+                                <p class="card-text"><span class="cardInfo"><b>Budget    : </b></span>₹${objects.budget}</p>
+                                <p class="card-text"><span class="cardInfo"><b>Days   : </b></span>${objects.days}</p>
+                                <p class="card-text"><span class="cardInfo"><b>Distance  : </b></span>${objects.distance}</p>
+                                <p class="card-text"><span class="cardInfo"><b>Contact   : </b></span>${objects.contact}</p>
+                            </div>
+                        </div>`).join('') + "</div>";
+            }
+            $("#sub-btn").click(()=>{
+                localStorage.setItem("budget","");
+                localStorage.setItem("location","");
+                var value=$("#res").val();
+                var radio=document.querySelector('input[name="sel_btn"]:checked').value;
+
+                if(radio=="budget" && value.length!=0)
+                {
+                    var url="/show-trip-budget?thisBudget="+value;
+                    $.get(url,(jsonAr)=>{
+                        if(jsonAr.length==0)container.innerHTML="<h1 style=\"margin-top:2em;\">No trip found</h1>";
+
+                        else{
+                            console.log(jsonAr);
+                            container.innerHTML=returnCards(jsonAr);
+                        }
+                    })
+                }
+                else if(radio=="loc" && value.length!=0)
+                {
+                    var url="/show-trip-loc?thisLoc="+value;
+                    $.get(url,(jsonAr)=>{
+                        if(jsonAr.length==0)container.innerHTML="<h1 style=\"margin-top:2em;\">No trip found</h1>";
+
+                        else{
+                            console.log(jsonAr);
+                            container.innerHTML=returnCards(jsonAr);
+                        }
+                    })
+                }
+                else{
+                    var url="/show-all-trips";
+                    $.get(url,(jsonAr)=>{
+                        if(jsonAr.length==0)container.innerHTML="<h1 style=\"margin-top:2em;\">No trip found</h1>";
+
+                        else{
+                            console.log(jsonAr);
+                            container.innerHTML=returnCards(jsonAr);
+                        }
+                    })
+                }
+            })
+        })
+    </script>
+</head>
+<body style="background-color:#18191A">
+    <div class="main">
+        <div class="nav-cont">
+            <div class="navbar">
+                <div class="logo">
+                    <h2><a href="/" style="text-decoration: none;color: #B0B3B8;">ThaparTravels</a></h2>
+                </div>
+                <nav>
+                    <ul>
+                        <li><a href="/">Home</a></li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+
+        <div class="search-cont" style="margin-top:0">
+            <div class="s-cont">
+                
+                <div class="radio-btn">
+                    <input type="radio" id="budget-btn" name="sel_btn" value="budget" checked>
+                    <label for="budget">Budget</label><br>
+
+                    <input type="radio" id="loc-btn" name="sel_btn" value="loc">
+                    <label for="loc">Location</label>
+                </div>
+                <div class="search">
+                        <input id="res" class="s-bar" style="padding:0 .5em;" type="text" placeholder="Enter budget or location">
+                        <input id="sub-btn"  class="sub-btn" type="submit" formaction="/result">
+                </div>
+            </div>
+        </div>
+        
+        <div id="products-cards-container">
+
+        </div>
+    </div>
+</div>
+</body>
+</html>

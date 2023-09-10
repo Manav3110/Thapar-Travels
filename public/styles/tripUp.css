@@ -1,0 +1,25 @@
+:root{
+    --dark:#18191A;
+    --mdark:#242526;
+    --lgrey:#E4E6EB;
+    --ldark:#3A3B3C;
+    --dgrey:#B0B3B8;
+    --blue:#2191D0;
+}
+
+#f-btn{
+    color: #2191D0;
+    border-color: #2191D0;
+}
+
+.form-cont{
+    background-color:#242526;
+}
+
+.head{
+    color: #2191D0;
+}
+
+.form-control{
+    background-color: #3A3B3C;
+}

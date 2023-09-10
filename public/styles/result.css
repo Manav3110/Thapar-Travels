@@ -1,0 +1,43 @@
+:root{
+    --dark:#18191A;
+    --mdark:#242526;
+    --lgrey:#E4E6EB;
+    --ldark:#3A3B3C;
+    --dgrey:#B0B3B8;
+    --blue:#2191D0;
+}
+
+#products-cards-container{
+    width: 65%;
+    margin: auto;
+}
+
+.products-cards{
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-auto-rows: auto; 
+}
+
+.card{
+
+    background-color:#242526;
+    margin: 3em 0;
+    display: flex;
+    flex-direction: column;
+    width: 18em;
+    height: 30em;
+}
+
+.cardImage{
+    height: 10em;
+    object-fit: cover;
+}
+
+.card-body{
+    color: #B0B3B8;
+    height: 13em;
+    padding: 1.4em;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+}

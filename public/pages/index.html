@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../styles/home.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" integrity="sha512-KfkfwYDsLkIlwQp6LFnl8zNdLGxu9YAA1QvwINks4PhcElQSvqcyVLLD9aMhXd13uQjoXtEKNosOWaZqXgel0g==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <script src="../lib/jquery-1.8.2.min.js"></script>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.10.4/gsap.min.js" integrity="sha512-VEBjfxWUOyzl0bAwh4gdLEaQyDYPvLrZql3pw1ifgb6fhEvZl9iDDehwHZ+dsMzA0Jfww8Xt7COSZuJ/slxc4Q==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <title>ThaparTravels</title>
+
+    <script>
+        $(document).ready(()=>{
+            var tl=gsap.timeline();
+
+            tl.fromTo(".logo-cont",{x:-200,opacity:0},{x:0,opacity:1,duration:1.4})
+            .fromTo(".in-con",{x:200,opacity:0},{x:0,opacity:1,duration:1.3,stagger:.5},"-=2")
+            .fromTo(".nav-cont",{y:-300,opacity:0},{y:000,opacity:1,duration:2},"-=5");
+            
+            localStorage.setItem("budget","");
+            localStorage.setItem("location","");
+            localStorage.setItem("admin","");
+
+            $(".login-btn").click(()=>{
+                $("#signModal").fadeOut();
+                $("#loginModal").fadeToggle();
+            })
+            $("#exitL").click(()=>{
+                $("#loginModal").fadeToggle();
+            })
+            
+            $("#openSign").click(()=>{
+                $("#loginModal").fadeOut();
+          // $("#signModal").attr("pointerEvents","auto");
+                $("#signModal").fadeToggle();
+            });
+
+            $("#exitS").click(()=>{
+                $("#signModal").fadeOut();
+            })
+
+            $("#gulmarg-img").click(()=>{
+                localStorage.setItem("location","gulmarg");
+                window.location.replace('/result');
+            })
+            $("#kheerganga-img").click(()=>{
+                localStorage.setItem("location","kheerganga");
+                window.location.replace('/result');
+            })
+            $("#spiti-img").click(()=>{
+                localStorage.setItem("location","spiti");
+                window.location.replace('/result');
+            })
+            $("#zanskar-img").click(()=>{
+                localStorage.setItem("location","zanskar");
+                window.location.replace('/result');
+            })
+            $("#udaipur-img").click(()=>{
+                localStorage.setItem("location","udaipur");
+                window.location.replace('/result');
+            })
+            $("#manali-img").click(()=>{
+                localStorage.setItem("location","manali");
+                window.location.replace('/result');
+            })
+
+            $("#btnsign").click(()=>{
+                var Loginemail=$("#SignMail").val();
+                var eurl="/chk-email-in-table?thisEmail="+Loginemail;
+                $.get(eurl,(jsonAr)=>{
+                    if(jsonAr.length==0 && $("#SignMail").length!=0 && Loginemail.match(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/))
+                    {
+                        $("#formSign").submit(()=>{
+                            return true;
+                        })
+                    }
+                    else{
+                    alert("Fill Correct info");
+                    $("#formSign").submit(()=>{
+                    return false;
+                    })
+                }
+            })
+        })
+            
+            $("#SignMail").change(()=>{
+                var Loginemail=$("#SignMail").val();
+                var eurl="/chk-email-in-table?thisEmail="+Loginemail;
+                $.get(eurl,(jsonAr)=>{
+                    if(!Loginemail.match(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/))
+                    {
+                      $("#chkSign").css("color","red");
+                      $("#chkSign").text("Invalid");
+                    }
+                    else
+                    if(jsonAr.length==0 && Loginemail!="")
+                    {
+                      $("#chkSign").css("color","green");
+                      $("#chkSign").text("available");
+                    }
+                    else
+                    {
+                      $("#chkSign").css("color","red");
+                      $("#chkSign").text("unavailable"); 
+                    }
+                })
+            })
+
+            $("#loginbtn").click(()=>{
+                
+                var Loginemail=$("#logMail").val();
+                var pass=$("#logPass").val();
+                var radio=document.querySelector('input[name="type"]:checked').value;
+                if(radio=="admin"){
+                    var eurl="/chk-email-in-admin-table?thisEmail="+Loginemail;
+                    $.get(eurl,(jsonAr)=>{
+                        if(jsonAr.length==0)
+                        {
+                        alert("Email address not found");
+                        }
+                        else
+                        {
+                            localStorage.setItem("email",jsonAr[0].email);
+                            if(pass==jsonAr[0].password){
+                                localStorage.setItem("admin","1");
+                                $(location).prop("href","http://localhost:5000/admin");
+                            }
+                            else{
+                                alert("Wrong Password");
+                            }
+                        }
+                    })
+                }
+                
+                else{
+                    var eurl="/chk-email-in-table?thisEmail="+Loginemail;
+                    $.get(eurl,(jsonAr)=>{
+                        if(jsonAr.length==0)
+                        {
+                            alert("Email address not found");
+                        }
+                        else
+                        {
+                            localStorage.setItem("email",jsonAr[0].Email);
+                            if(pass==jsonAr[0].password){
+                                $(location).prop("href","http://localhost:5000/profile");
+                            }
+                            else{
+                                alert("Wrong Password");
+                            }
+                        }
+                    })
+                }
+            })
+
+            $("#searchbtn").click(()=>{
+                var radio=document.querySelector('input[name="sel_btn"]:checked').value;
+                
+                var inp=$("#sbar").val();
+                if(radio=="budget")
+                {
+                    localStorage.setItem("budget",inp);
+                }
+                else{
+                    localStorage.setItem("location",inp)
+                }
+            })
+        })
+    </script>
+</head>
+<body>
+    <div class="main">
+        <div class="nav-cont py-1">
+            <div class="navbar">
+                <div class="logo">
+                    <h3 style="font-weight: 700;"><a href="/" style="text-decoration: none;color: #B0B3B8;">ThaparTravels</a></h3>
+                </div>
+                <nav>
+                    <ul>
+                        <li><a href="/">Home</a></li>
+                        <li><span class="login-btn" style="cursor:pointer;">login</span></li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+
+        <div class="row col-md-5 p-5 pt-4" id="signModal">
+            <form method="POST">
+                <div class="exit" id="exitS" style="color:#B0B3B8;"><i class="fas fa-times-circle"></i></div>
+                <div style="text-align: center;">
+                    <h1 class="mb-3" style="color:#2191D0;">SignUp</h1>
+                </div>
+                <div class="form-group col-12 my-3">
+                    <label>Name</label>
+                    <input name="username" required class="form-control" type="text" id="userName" style="background-color:#3A3B3C;color: #B0B3B8;">
+                </div>
+                <div class="form-group col-12 my-3">
+                    <label>Email</label>
+                    <input name="email" required class="form-control" type="email" id="SignMail" style="background-color:#3A3B3C;color: #B0B3B8;">
+                    <small id="chkSign"></small>
+                </div>
+                <div class="form-group col-12 my-3">
+                    <label>Roll no</label>
+                    <input name="rollno" required class="form-control" type="number" id="rollNo" style="background-color:#3A3B3C;color: #B0B3B8;">
+                </div>
+                <div class="form-group col-12 my-3">
+                    <label>Contact</label>
+                    <input required name="contact" class="form-control" type="text" id="usercontact" style="background-color:#3A3B3C;color: #B0B3B8;">
+                </div>
+                <div class="form-group col-12 my3">
+                    <label>Password</label>
+                    <input required name="pwd" class="form-control" type="password" required style="background-color:#3A3B3C;color: #B0B3B8;">
+                </div>
+                <div class="row">
+                    <div class="col-md-3">
+                        <input id="btnsign" type="submit" class="sub-btn mt-2" value="Sign Up" formaction="/signUp">
+                    </div>
+                </div>
+            </form>
+          </div>
+    
+          <div class="row col-md-5 p-5 pt-4" id="loginModal">
+            
+            <form method="POST">
+                <div class="exit" id="exitL" style="color: white;"><i class="fas fa-times-circle"></i></div>
+                <div style="text-align: center;">
+                    <h1 class="mb-3" style="color:#2191D0;">Login</h1>
+                </div>
+                <div class="form-group col-12 my-3">
+                    <label>Email</label>
+                    <input required id="logMail" name="email" class="form-control" type="email" style="background-color:#3A3B3C;color: #B0B3B8;">
+                </div>
+                <div class="form-group col-12 my3">
+                    <label>Password</label>
+                    <input required id="logPass" name="pwd" class="form-control" type="password" style="background-color:#3A3B3C;color: #B0B3B8;">
+                </div>
+                <div class="form-group col-12 my-3">
+                    <label>Type</label>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <input type="radio" value="user" name="type" checked>
+                            <label>user</label>
+                        </div>
+                        <div class="col-md-4">
+                            <input required type="radio" value="admin" name="type">
+                            <label>admin</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mt-4">
+                    <div class="col-md-3" style="display: flex;">
+                        <input id="loginbtn" type="button" class="sub-btn" value="Login" >
+                        <a id="openSign" class="mt-3" style="color:#B0B3B8;margin-left: 1em;text-decoration: underline;cursor: pointer;">SignUp</a>
+                    </div>
+                </div>
+            </form>
+          </div>
+
+        <div class="upper-cont">
+            <div class="upper-container">
+                <div class="logo-cont">
+                    <h1><span style="color: #2191D0;font-weight:700;">Thapar</span><span style="font-weight: 700;color: #f91b44 ;">Travels</span></h1>
+                </div> 
+                <div class="in-con">
+                    <h4>Trips for you</h4>
+                    <h5>Try searching for a location or a budget</h5>
+                </div>
+            </div>
+        </div>
+
+        <div class="search-cont">
+            <div class="s-cont">
+                
+                <div class="radio-btn">
+                    <input type="radio" id="budget-btn" name="sel_btn" value="budget" checked>
+                    <label for="budget">Budget</label><br>
+                    <input type="radio" id="loc-btn" name="sel_btn" value="loc" >
+                    <label for="loc">Location</label>
+                </div>
+                <div class="search">
+                    <form method="get">
+                        <input id="sbar" class="s-bar" type="text" placeholder="Enter a budget or location" id="mSearch">
+                        <input id="searchbtn" class="sub-btn" type="submit" formaction="/result">
+                    </form>
+                </div> 
+            </div>
+            <!-- <div class="image">
+                <img src="../assets/back-01.png" alt="">
+            </div> -->
+        </div>
+
+        <div class="slide-cont">
+            <div class="slide-container">
+                <h2>Top pics for you</h2>
+
+                <div class="slide-show" style="margin-top: 2em;">
+                    <div id="gulmarg-img" class="image-container" style="background-image: url('../assets/gulmarg.jpeg');"><div class="content-img">Gulmarg</div></div>
+                    <div id="kheerganga-img" class="image-container" style="background-image: url('../assets/kheerganga.jpg');"><div class="content-img">Kheerganga</div></div>
+                    <div id="manali-img" class="image-container" style="background-image: url('../assets/manali.jpg');"><div class="content-img">Manali</div></div>
+                    <div id="spiti-img" class="image-container" style="background-image: url('../assets/spiti.jpg');"><div class="content-img">Spiti valley</div></div>
+                    <div id="udaipur-img" class="image-container" style="background-image: url('../assets/udaipur.jpeg');"><div class="content-img">Udaipur</div></div>
+                    <div id="zanskar-img" class="image-container" style="background-image: url('../assets/zanskar.jpg');"><div class="content-img">Zanskar</div></div>  
+                </div>
+            </div>
+        </div>
+
+        
+
+
+        <div class="footer">
+            <div class="in-footer">
+                <div class="social-media">
+                    <a href=""><i class="fa-brands fa-instagram"></i></a>
+                    <a href=""><i class="fa-brands fa-facebook"></i></a>
+                </div>
+                <div class="bottom">
+                    <div class="logo-bottom">
+                        ThaparTravels
+                    </div>
+                    <div class="copyRight">
+                        &#169 2022 thapartravels | All rights reserved.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
